@@ -50,19 +50,13 @@ colnames(all_combo) <- c(Unique_Col_Names)
 ## Update with descriptive activity names, rather 
 ## than the activity numbers
 all_combo$Activity <- activities[match(all_combo$Activity, activities[,1]),2]
-
-## Now select only the mean and standard deviation related variables
-# use the dplyr function select(..contains()...) to help here....
-# data_fname[ , grepl("mean", colnames(data_fname))]
-# grep("(mean|std)\\(\\)",colnames(joinedDataset))
-# mean_cols <- matchcols(x.tst, with=c("mean"), without=c("meanFreq"))
-#   std_cols  <- matchcols(x.tst, with=c("std"))
-#   new_cols <- c(mean_cols, std_cols)
-
 all_combo_tbldf <- tbl_df(all_combo)
 
+## Now select only the mean and standard deviation related variables
 result_tbldf <- select(all_combo_df, Subject, Activity, matches("mean.."), matches("std.."))
 
+## Summarize by Subject and Activity, using only the mean of each variable
 summary_tbldf <- summarise_each(group_by(result_tbldf, Subject, Activity), funs(mean))
 
+## And finally, write the output to a text file for submission
 write.table(summary_tbldf, "ProjectOutput.txt", row.name=FALSE)
